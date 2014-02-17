@@ -1,6 +1,9 @@
 var platform='iOS';
-//var platform='pc';
+var platform='pc';
 //var platform='Android';
+var dist_scroll=30;
+var scroll_band=100;
+var auto_scroll=true;
 
 function inside(x,y,xmin,ymin,width,height)
 {
@@ -33,7 +36,11 @@ angular.module('dragModule', [])
                                   Pepe:{name:'Pepe',bonos:['Bono1','Bono2','Bono3']},
                                   Ramon:{name:'Ramon',bonos:['Bono4','Bono6']},
                                   Jesus:{name:'Jesus',bonos:['Bono7','Bono8','Bono9']},
-                                  Gustavo:{name:'Gustavo',bonos:['Bono10','Bono11','Bono12']}
+                                  Gustavo:{name:'Gustavo',bonos:['Bono10','Bono11','Bono12']},
+                                  Einstein:{name:'Einstein',bonos:['Bono21','Bono22','Bono23']},
+                                  Edison:{name:'Edison',bonos:['Bono24','Bono26']},
+                                  Newton:{name:'Newton',bonos:['Bono27','Bono28','Bono29']},
+                                  Pons:{name:'Pons',bonos:['Bono120','Bono121','Bono122']}
                                   };
                 $scope.drag_over=function(bono,oper_dst)
                     {
@@ -55,10 +62,6 @@ angular.module('dragModule', [])
                     	$scope.oper_src=oper_src;
                     	$scope.oper_dst=oper_src;
                     };
-                $scope.remove_item=function(){
-                        $scope.operarios['Pepe']['bonos'].splice(1,1);
-                }
-                
 }]).
   directive('myDraggable', function($document) {
     return function(scope, element, attr) {
@@ -92,59 +95,91 @@ angular.module('dragModule', [])
  
       element.on(start, function	(event) {
           if(scope.dragging=='no-dragging')
-          {
-              scope.dragging='dragging';
+          {            
+              scope.dragging='waiting';
               function mouseup() {
 	                element.css({
 	                     border: '1px solid green',
 	                     top:"0px",
 	                     left:"0px"
 	                });
-              	   scope.drop(element[0].attributes.name_bono.value);
+	                if (scope.dragging=='dragging')
+	                {
+              	   		scope.drop(element[0].attributes.name_bono.value);
+              	   	}
+              	   	else {
+              	   		
+              	   	}
 	                $document.unbind(move, mousemove);
 	                $document.unbind(stop, mouseup);
 	                scope.dragging='no-dragging';
               }
               function mousemove(event) {
-	                element.myy = event.pageY - element.startY;
-	                element.myx = event.pageX - element.startX;
-	                var css_val={
-	                  top: element.myy + 'px',
-	                  left:  element.myx + 'px'
-	                };
-	                element.css(css_val);
-	                for(dz in scope.drop_zones)
-	                {
-	                	var d=scope.drop_zones[dz][0];
-	                	if (inside(event.pageX,event.pageY,d.offsetLeft,d.offsetTop,d.offsetWidth,d.offsetHeight))
-	                	{
-	                		scope.drag_over(element[0].attributes.name_bono.value,scope.drop_zones[dz][0].attributes.id2.value);
-	                	}
-	                }
-              }
-                     
+              	   if (scope.dragging=='dragging'){
+              	   	      event.preventDefault();
+			                element.myy = event.pageY - element.startY;
+			                element.myx = event.pageX - element.startX;
+                         var maxLeft=element[0].offsetParent.offsetParent.offsetWidth-element[0].offsetParent.offsetWidth-element[0].offsetParent.offsetLeft;    
+			                var css_val={
+			                  top: element.myy + 'px',
+			                  //left: element.myx + 'px'
+			                  left:  Math.min(element.myx,maxLeft) + 'px'
+			                };
+			                element.css(css_val);
+			                for(dz in scope.drop_zones)
+			                {
+			                	var d=scope.drop_zones[dz][0];
+			                	if (inside(event.pageX,event.pageY,d.offsetLeft,d.offsetTop,d.offsetWidth,d.offsetHeight))
+			                	{
+			                		scope.drag_over(element[0].attributes.name_bono.value,scope.drop_zones[dz][0].attributes.id2.value);
+			                	}
+			                }
+			                if(auto_scroll){
+			                	
+			                }
+		              } 
+		              else if(scope.dragging=='waiting' && !inside(event.pageX,event.pageY,element.initPageX-dist_scroll,element.initPageY-dist_scroll,element.initPageX+dist_scroll,element.initPageY+dist_scroll)) {
+                          $document.unbind(move, mousemove);
+	                		 $document.unbind(stop, mouseup);		
+	                		 scope.dragging='no-dragging';              	
+	                		 element.css({
+	                     			border: '1px solid orange',
+	                     			top:"0px",
+	                     			left:"0px"
+	                		});  
+		              }
+              }  
+              
               // Prevent default dragging of selected content
-              event.preventDefault();
-              element.myx=0;
-              element.myy=0;
-              element.startX = event.pageX - element.myx;
-              element.startY = event.pageY - element.myy;
+              //event.preventDefault();
               $document.on(move, mousemove);
-              $document.on(stop, mouseup);
-              
-              for(dz in scope.drop_zones)
-              {
-	             	var d=scope.drop_zones[dz][0];
-	             	if (inside(event.pageX,event.pageY,d.offsetLeft,d.offsetTop,d.offsetWidth,d.offsetHeight))
-	             	{
-	             		scope.drag_start(element[0].attributes.name_bono.value,scope.drop_zones[dz][0].attributes.id2.value);
-	             	}
-              }
+				 $document.on(stop, mouseup);
+				 element.initPageX=event.pageX;
+				 element.initPageY=event.pageY;
+              setTimeout(function(){
+              	    if(scope.dragging=='waiting')
+              	    {           	    	    
+              	    	    scope.dragging='dragging';
+				              element.myx=0;
+				              element.myy=0;
+				              element.startX = event.pageX - element.myx;
+				              element.startY = event.pageY - element.myy;
 
-              element.css({
-                    border: '5px solid green'
-              });
-              
+				              
+				              for(dz in scope.drop_zones)
+				              {
+					             	var d=scope.drop_zones[dz][0];
+					             	if (inside(event.pageX,event.pageY,d.offsetLeft,d.offsetTop,d.offsetWidth,d.offsetHeight))
+					             	{
+					             		scope.drag_start(element[0].attributes.name_bono.value,scope.drop_zones[dz][0].attributes.id2.value);
+					             	}
+				              }
+				
+				              element.css({
+				                    border: '5px solid green'
+				              });
+				      }
+             },1000); 
           }
       });
  
