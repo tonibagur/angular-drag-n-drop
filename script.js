@@ -1,5 +1,5 @@
 var platform='iOS';
-var platform='pc';
+//var platform='pc';
 //var platform='Android';
 
 function inside(x,y,xmin,ymin,width,height)
@@ -94,7 +94,17 @@ angular.module('dragModule', [])
           if(scope.dragging=='no-dragging')
           {
               scope.dragging='dragging';
-          
+              function mouseup() {
+	                element.css({
+	                     border: '1px solid green',
+	                     top:"0px",
+	                     left:"0px"
+	                });
+              	   scope.drop(element[0].attributes.name_bono.value);
+	                $document.unbind(move, mousemove);
+	                $document.unbind(stop, mouseup);
+	                scope.dragging='no-dragging';
+              }
               function mousemove(event) {
 	                element.myy = event.pageY - element.startY;
 	                element.myx = event.pageX - element.startX;
@@ -111,18 +121,6 @@ angular.module('dragModule', [])
 	                		scope.drag_over(element[0].attributes.name_bono.value,scope.drop_zones[dz][0].attributes.id2.value);
 	                	}
 	                }
-              }
-     
-              function mouseup() {
-	                element.css({
-	                     border: '1px solid green',
-	                     top:"0px",
-	                     left:"0px"
-	                });
-              	   scope.drop(element[0].attributes.name_bono.value);
-	                $document.unbind(move, mousemove);
-	                $document.unbind(stop, mouseup);
-	                scope.dragging='no-dragging';
               }
                      
               // Prevent default dragging of selected content
