@@ -1,8 +1,10 @@
 var platform='iOS';
-var platform='pc';
+//var platform='pc';
+//var platform='pc';
 //var platform='Android';
 var dist_scroll=30;
-var scroll_band=100;
+var scroll_band=200;
+var scroll_velocity=20;
 var auto_scroll=true;
 
 function inside(x,y,xmin,ymin,width,height)
@@ -40,7 +42,7 @@ angular.module('dragModule', [])
                                   Einstein:{name:'Einstein',bonos:['Bono21','Bono22','Bono23']},
                                   Edison:{name:'Edison',bonos:['Bono24','Bono26']},
                                   Newton:{name:'Newton',bonos:['Bono27','Bono28','Bono29']},
-                                  Pons:{name:'Pons',bonos:['Bono120','Bono121','Bono122']}
+                                  Pons:{name:'Ponss',bonos:['Bono120','Bono121','Bono122']}
                                   };
                 $scope.drag_over=function(bono,oper_dst)
                     {
@@ -135,7 +137,26 @@ angular.module('dragModule', [])
 			                	}
 			                }
 			                if(auto_scroll){
-			                	
+			                	var h;
+			                    var screeny;
+			                    if (platform == 'pc')
+			                    {
+			                    	h=screen.height;
+			                    	screeny=event.screenY;
+			                    }
+			                    else {
+			                    	h=screen.width;
+			                    	screeny=event.touches[0].clientY;
+			                    }
+			                    if (screeny<= scroll_band)
+			                    {
+			                    	element[0].offsetParent.offsetParent.scrollTop-=scroll_velocity;
+			                    }
+			                    if (screeny >= h-scroll_band)
+			                    {
+			                    	console.log(element);
+			                    	element[0].offsetParent.offsetParent.scrollTop+=scroll_velocity;
+			                    }
 			                }
 		              } 
 		              else if(scope.dragging=='waiting' && !inside(event.pageX,event.pageY,element.initPageX-dist_scroll,element.initPageY-dist_scroll,element.initPageX+dist_scroll,element.initPageY+dist_scroll)) {
