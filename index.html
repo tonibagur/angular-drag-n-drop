@@ -8,10 +8,12 @@
             margin:0 auto;
         }
         .pare{
-            width:100%;
+            float:left;
+            width:49.0%;
             max-width:100%;
             border:5px solid blue;
             margin-left:0px;
+            height:400px;
         }
         .operario-box{
             float:left;
@@ -20,7 +22,7 @@
             backgroundColor: lightgrey;
             cursor: pointer;
             height: 300px;
-            width:49.8%;
+            width:100%;
             -moz-user-select: -moz-none;
    			  -khtml-user-select: none;
    			  -webkit-user-select: none;
@@ -41,6 +43,12 @@
     </style>
   </head>
   <body ng-controller='operariosController'>
+    <div class="pare">
+    	<div class="operario-box" drop-zone id2="sin_operario">
+    		<div class="titulo-box" >Sin operario</div>
+    		<div class="bono-box" my-draggable ng-repeat="bono in sin_operario" name_bono="{{bono}}">{{bono}}</div>
+    	</div>
+    </div>
     <div class="pare" >
         <div class="operario-box" drop-zone ng-repeat="(key,val) in operarios" id2="{{operarios[key].name}}">
             <div class="titulo-box">{{operarios[key].name}}</div>

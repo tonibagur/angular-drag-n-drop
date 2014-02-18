@@ -1,6 +1,5 @@
 var platform='iOS';
 //var platform='pc';
-//var platform='pc';
 //var platform='Android';
 var dist_scroll=30;
 var scroll_band=200;
@@ -44,6 +43,7 @@ angular.module('dragModule', [])
                                   Newton:{name:'Newton',bonos:['Bono27','Bono28','Bono29']},
                                   Pons:{name:'Ponss',bonos:['Bono120','Bono121','Bono122']}
                                   };
+                $scope.sin_operario=['Bono sin 1','Bono sin 2','Bono sin 3']
                 $scope.drag_over=function(bono,oper_dst)
                     {
                     	$scope.oper_dst=oper_dst;
@@ -53,8 +53,21 @@ angular.module('dragModule', [])
                     	if ($scope.oper_dst!=$scope.oper_src  )
                     	{
 							    //$scope.operarios[$scope.oper_src].bonos=remove_from_list($scope.operarios[$scope.oper_src].bonos,bono)	;
-							    remove_from_list($scope.operarios[$scope.oper_src].bonos,bono)	;   
-							    $scope.operarios[$scope.oper_dst].bonos.push(bono);
+							    if ($scope.oper_src !='sin_operario')
+							    {
+							    	remove_from_list($scope.operarios[$scope.oper_src].bonos,bono)	; 
+							    }
+							    else {
+							    	console.log($scope.sin_operario);
+							    	remove_from_list($scope.sin_operario,bono);
+							    }  
+							    if ($scope.oper_dst!='sin_operario')
+							    {
+							    	$scope.operarios[$scope.oper_dst].bonos.push(bono);
+							    }
+							    else {
+							    	$scope.sin_operario.push(bono);
+							    }
 							    $scope.$apply();
                     	}
                     	
@@ -154,7 +167,6 @@ angular.module('dragModule', [])
 			                    }
 			                    if (screeny >= h-scroll_band)
 			                    {
-			                    	console.log(element);
 			                    	element[0].offsetParent.offsetParent.scrollTop+=scroll_velocity;
 			                    }
 			                }
